@@ -17,8 +17,8 @@
 2. Cloner dans `/Users/nicolaschalopin/Documents/github/`
 3. Créer structure de dossiers adaptée au projet (selon type fintech/saas/etc.)
 4. Ouvrir dans VSCode
-5. Créer/utiliser GitHub Project Dashboard 'Multi-Agents-Dashboard'
-6. Créer/vérifier TOUS les labels suivants (via GitHub MCP uniquement):
+5. Créer /utiliser GitHub Project Dashboard 'Multi-Agents-Dashboard'
+6. Créer /vérifier TOUS les labels suivants (via GitHub MCP uniquement):
 
 ### LABELS AGENTS:
 - `backend-expert` (couleur: #96CEB4) - Tâches backend et API
@@ -71,28 +71,38 @@
 
 ## COMMANDES TMUX À EXÉCUTER VRAIMENT:
 
+
+
+
 ```bash
+# Variables de configuration
+PROJECT_NAME="[nom-projet]"
+PR_NUMBER="[N]"
+BRANCH_NAME="[branch-name]"
+AGENT_TYPE="[agent spécialisé]"
+
+# Prompts multi-lignes
+SURVEILLANCE_PROMPT="Tu es multi-agent-manager en surveillance permanente. Surveille PRs pour détecter validations. Dès que toutes tâches validées, lance clôture projet."
+
+TASK_PROMPT="Tu es github-automation-manager pour tâche ${TASK_NAME}. Lance ${AGENT_TYPE} pour écrire son fichier MD. Une fois terminé, valide et commente PR."
+
+# Commandes tmux optimisées
 # 1. Créer session tmux
-tmux new-session -d -s '[nom-projet]'
+tmux new-session -d -s "${PROJECT_NAME}"
 
 # 2. PANNEAU PRINCIPAL 0 - Multi-Agent-Manager Surveillance
-tmux send-keys -t '[nom-projet].0' 'echo "👑 SURVEILLANCE - Multi-Agent-Manager"' Enter
-tmux send-keys -t '[nom-projet].0' 'echo "🎯 PRÊT POUR MULTI-AGENT-MANAGER"' Enter
-tmux send-keys -t '[nom-projet].0' 'claude' Enter
-tmux send-keys -t '[nom-projet].0' Enter
-tmux send-keys -t '[nom-projet].0' 'Tu es multi-agent-manager en surveillance permanente. Surveille PRs pour détecter validations. Dès que toutes tâches validées, lance clôture projet.' Enter
+tmux send-keys -t "${PROJECT_NAME}.0" "echo '👑 SURVEILLANCE - Multi-Agent-Manager'; echo '🎯 PRÊT POUR MULTI-AGENT-MANAGER'; claude" Enter
+tmux send-keys -t "${PROJECT_NAME}.0" "${SURVEILLANCE_PROMPT}" Enter
 
 # 3. POUR CHAQUE TÂCHE: Créer panneau + lancer Claude
-# (Répéter pour chaque tâche identifiée)
-tmux split-window -t '[nom-projet]' -v
-tmux send-keys -t '[nom-projet].1' 'echo "🛠️ TÂCHE [X] - [nom tâche] (PR #[N])"' Enter
-tmux send-keys -t '[nom-projet].1' 'git checkout feature/[branch-name]' Enter
-tmux send-keys -t '[nom-projet].1' 'claude' Enter
-tmux send-keys -t '[nom-projet].1' Enter
-tmux send-keys -t '[nom-projet].1' 'Tu es github-automation-manager pour tâche [nom tâche]. Lance [agent spécialisé] pour écrire son fichier MD. Une fois terminé, valide et commente PR.' Enter
+TASK_NAME="[nom tâche]"
+TASK_NUMBER="[X]"
+tmux split-window -t "${PROJECT_NAME}" -v
+tmux send-keys -t "${PROJECT_NAME}.1" "echo '🛠️ TÂCHE ${TASK_NUMBER} - ${TASK_NAME} (PR #${PR_NUMBER})'; git checkout feature/${BRANCH_NAME}; claude" Enter
+tmux send-keys -t "${PROJECT_NAME}.1" "${TASK_PROMPT}" Enter
 
 # 4. Organisation finale
-tmux select-layout -t '[nom-projet]' tiled
+tmux select-layout -t "${PROJECT_NAME}" tiled
 ```
 
 > **CRUCIAL:** Utiliser l'outil Bash pour exécuter ces commandes, PAS echo !
@@ -173,7 +183,7 @@ tmux select-layout -t '[nom-projet]' tiled
 
 #### 🎫 ÉTAPE 2: Multi-Agent-Manager Infrastructure (8 sous-tâches)
 - ☐ Créer repository GitHub unique
-- ☐ Cloner dans /Users/nicolaschalopin/Documents/github/
+- ☐ Cloner dans le dossier ~/repos
 - ☐ Créer structure dossiers adaptée au projet
 - ☐ Ouvrir dans VSCode
 - ☐ Créer/utiliser GitHub Project Dashboard 'Multi-Agents-Dashboard'
